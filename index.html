@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>專案經理 Portfolio | 車用顯示供應鏈 & B2B 專案管理</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Alpine.js for interactive components -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#0B192C',
+                            900: '#030811',
+                        },
+                        brand: {
+                            blue: '#1E3A8A',
+                            cyan: '#06B6D4',
+                            emerald: '#10B981',
+                            accent: '#2563EB',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+        }
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        html:not(.dark) .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+        .dark .gradient-text {
+            background: linear-gradient(135deg, #60A5FA 0%, #34D399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        html:not(.dark) .gradient-text {
+            background: linear-gradient(135deg, #1D4ED8 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Equalizer Animation for Music */
+        .eq-bar {
+            width: 3px;
+            background-color: currentColor;
+            animation: eqBounce 1.2s infinite ease-in-out;
+        }
+        .eq-bar:nth-child(1) { animation-delay: 0.0s; height: 12px; }
+        .eq-bar:nth-child(2) { animation-delay: 0.2s; height: 16px; }
+        .eq-bar:nth-child(3) { animation-delay: 0.4s; height: 10px; }
+        @keyframes eqBounce {
+            0%, 100% { transform: scaleY(0.3); }
+            50% { transform: scaleY(1); }
+        }
+    </style>
+</head>
+<html lang="zh-TW" class="scroll-smooth dark" :class="isDark ? 'dark' : ''" x-data="{ isDark: true }">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white transition-colors duration-300" 
+      x-data="{ 
+        mobileMenuOpen: false, 
+        copyToast: false, 
+        isPlaying: false,
+        toggleAudio() {
+            const audio = $refs.audioPlayer;
+            if (this.isPlaying) {
+                audio.pause();
+                this.isPlaying = false;
+            } else {
+                audio.play().then(() => {
+                    this.isPlaying = true;
+                }).catch(err => {
+                    console.log('Audio autoplay prevented:', err);
+                });
+            }
+        }
+      }">
+
+    <!-- Hidden Background Audio Player -->
+    <audio x-ref="audioPlayer" src="https://img.ai365.fans/artworks/b7d90a2d-29f9-48ae-a411-b5d20f8ebb24/l1k5kck01sq.mp3" loop preload="auto"></audio>
+
+    <!-- Floating Header Navigation -->
+    <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+            <a href="#hero" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-400 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
+                    PM
+                </div>
+                <div>
+                    <span class="text-lg font-bold tracking-tight text-slate-900 dark:text-white block leading-none">B2B 專案管理實踐者</span>
+                    <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">車用顯示與偏光片產業</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+                <a href="#about" class="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors">核心優勢</a>
+                <a href="#metrics" class="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors">量化成果</a>
+                <a href="#skills" class="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors">專業技能</a>
+                <a href="#case-study" class="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors">危機處置實案</a>
+                <a href="#experience" class="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors">實戰經歷</a>
+            </nav>
+
+            <!-- Control Buttons & CTA -->
+            <div class="hidden md:flex items-center gap-3">
+                <!-- Theme Toggle Button -->
+                <button @click="isDark = !isDark" 
+                        class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition-all flex items-center justify-center"
+                        :title="isDark ? '切換至淺色主題' : '切換至深色主題'">
+                    <i class="fa-solid" :class="isDark ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-600'"></i>
+                </button>
+
+                <!-- Music Control Button -->
+                <button @click="toggleAudio()" 
+                        class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 text-xs font-semibold transition-all flex items-center gap-2">
+                    <template x-if="isPlaying">
+                        <span class="flex items-center gap-1 text-cyan-500 h-4">
+                            <span class="eq-bar"></span>
+                            <span class="eq-bar"></span>
+                            <span class="eq-bar"></span>
+                        </span>
+                    </template>
+                    <template x-if="!isPlaying">
+                        <i class="fa-solid fa-music text-slate-400"></i>
+                    </template>
+                    <span x-text="isPlaying ? '音樂播放中' : '開啟背景音樂'"></span>
+                </button>
+
+                <!-- CTA Button -->
+                <a href="#contact" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-all shadow-md hover:shadow-blue-500/25 flex items-center gap-2">
+                    <i class="fa-solid fa-paper-plane text-xs"></i> 聯繫洽談
+                </a>
+            </div>
+
+            <!-- Mobile Menu Toggle Button -->
+            <div class="flex items-center gap-2 md:hidden">
+                <button @click="isDark = !isDark" class="p-2 rounded-lg text-slate-600 dark:text-slate-400">
+                    <i class="fa-solid" :class="isDark ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-600'"></i>
+                </button>
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" aria-label="Menu">
+                    <i class="fa-solid" :class="mobileMenuOpen ? 'fa-xmark text-xl' : 'fa-bars text-xl'"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Dropdown Menu -->
+        <div x-show="mobileMenuOpen" x-transition class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 pt-2 pb-6 space-y-3">
+            <a href="#about" @click="mobileMenuOpen = false" class="block py-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 font-medium">核心優勢</a>
+            <a href="#metrics" @click="mobileMenuOpen = false" class="block py-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 font-medium">量化成果</a>
+            <a href="#skills" @click="mobileMenuOpen = false" class="block py-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 font-medium">專業技能</a>
+            <a href="#case-study" @click="mobileMenuOpen = false" class="block py-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 font-medium">危機處置實案</a>
+            <a href="#experience" @click="mobileMenuOpen = false" class="block py-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 font-medium">實戰經歷</a>
+            
+            <button @click="toggleAudio()" class="w-full text-left py-2.5 px-3 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-sm flex items-center justify-between">
+                <span>背景音樂</span>
+                <span class="text-xs text-blue-600 dark:text-cyan-400 font-bold" x-text="isPlaying ? '🔊 播放中 (點擊關閉)' : '🔇 點擊播放'"></span>
+            </button>
+
+            <a href="#contact" @click="mobileMenuOpen = false" class="block py-3 text-center rounded-lg bg-blue-600 text-white font-medium">聯繫洽談</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden">
+        <!-- Background Ambient Glow -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/10 dark:bg-blue-600/15 blur-[120px] rounded-full pointer-events-none"></div>
+        <div class="absolute top-1/3 right-10 w-[300px] h-[300px] bg-cyan-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Main Pitch Column -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="flex flex-col sm:flex-row items-center lg:items-start gap-6">
+                        <!-- Headshot Photo Container -->
+                        <div class="relative shrink-0">
+                            <div class="w-32 h-32 sm:w-36 sm:h-36 rounded-2xl overflow-hidden border-2 border-cyan-500/50 dark:border-cyan-400/40 shadow-xl shadow-cyan-500/20 group">
+                                <img src="https://img.ai365.fans/cdn-cgi/image/width=1400,quality=90,format=auto/artworks/b7d90a2d-29f9-48ae-a411-b5d20f8ebb24/wst2vxucgng.jpeg" 
+                                     alt="專案經理照片" 
+                                     onerror="this.onerror=null; this.src='https://placehold.co/400x400/1e293b/ffffff?text=PM+Profile';"
+                                     class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300">
+                            </div>
+                            <div class="absolute -bottom-2 -right-2 bg-emerald-500 text-slate-950 font-bold text-[10px] px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-md border border-white dark:border-slate-900">
+                                <span class="w-1.5 h-1.5 rounded-full bg-slate-950 animate-ping"></span>
+                                求職中
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-100 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-cyan-400 text-xs sm:text-sm font-semibold tracking-wide">
+                                <span class="w-2 h-2 rounded-full bg-blue-600 dark:bg-cyan-400 animate-pulse"></span>
+                                尋求專案管理 (PM) 職缺｜車用顯示 & B2B 供應鏈
+                            </div>
+
+                            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+                                連結客戶與日本原廠<br>
+                                <span class="gradient-text">掌控 1.2 億規模的專案樞紐</span>
+                            </h1>
+                        </div>
+                    </div>
+
+                    <p class="text-slate-600 dark:text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal">
+                        近 <span class="text-slate-900 dark:text-white font-semibold">3 年 B2B 實戰經驗</span>，前偏光片大廠業務副主任。深度對接 Tier-1 面板巨頭及其車用子公司。專長於 <span class="text-blue-700 dark:text-cyan-300 font-medium">NPI 新案導入、跨國供應鏈風控與材料轉換危機應變</span>，具備 JLPT N1 與 TOEIC 900 雙語商務溝通實力。
+                    </p>
+
+                    <!-- Language Badges & Quick Stats -->
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
+                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-sm">
+                            <i class="fa-solid fa-language text-cyan-600 dark:text-cyan-400"></i> 日語高階 JLPT N1
+                        </div>
+                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-sm">
+                            <i class="fa-solid fa-globe text-blue-600 dark:text-blue-400"></i> 英語精通 TOEIC 900
+                        </div>
+                        <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-sm">
+                            <i class="fa-solid fa-car text-emerald-600 dark:text-emerald-400"></i> 車用 Display 供應鏈
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="pt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                        <a href="#contact" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-semibold text-base transition-all shadow-lg shadow-blue-600/25 text-center flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-envelope"></i> 預約面談 / 洽談
+                        </a>
+                        <a href="#case-study" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-base transition-all text-center flex items-center justify-center gap-2 shadow-sm">
+                            <i class="fa-solid fa-shield-halved text-blue-600 dark:text-cyan-400"></i> 查看危機處理案例
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Feature Glass Card -->
+                <div class="lg:col-span-5">
+                    <div class="glass-card rounded-2xl p-6 sm:p-8 relative shadow-2xl">
+                        <div class="absolute -top-3 -right-3 px-3 py-1 bg-emerald-500 text-slate-950 font-bold text-xs rounded-full uppercase tracking-wider shadow">
+                            Proven Impact
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-blue-600 dark:text-blue-400"></i> 核心營運範疇概覽
+                        </h3>
+
+                        <div class="space-y-5">
+                            <div class="bg-slate-100/80 dark:bg-slate-900/90 rounded-xl p-4 border border-slate-200 dark:border-slate-800">
+                                <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">半年經手產品與專案規模</div>
+                                <div class="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-cyan-400 mt-1">
+                                    NT$ 1.2 億 <span class="text-xs text-slate-500 dark:text-slate-400 font-normal">/ 半年</span>
+                                </div>
+                                <div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden">
+                                    <div class="bg-blue-600 dark:bg-cyan-400 h-full w-full"></div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-slate-100/80 dark:bg-slate-900/90 rounded-xl p-4 border border-slate-200 dark:border-slate-800">
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">量產產品管理</div>
+                                    <div class="text-2xl font-bold text-slate-900 dark:text-white mt-1">200+ <span class="text-xs font-normal text-slate-500 dark:text-slate-400">SKUs</span></div>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">維持高供貨穩定度</p>
+                                </div>
+                                <div class="bg-slate-100/80 dark:bg-slate-900/90 rounded-xl p-4 border border-slate-200 dark:border-slate-800">
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">NPI 新案導入</div>
+                                    <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">30+ <span class="text-xs font-normal text-slate-500 dark:text-slate-400">專案</span></div>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">規格至量產全程掌控</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-100/80 dark:bg-slate-900/90 rounded-xl p-4 border border-slate-200 dark:border-slate-800 flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
+                                    <i class="fa-solid fa-handshake text-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-slate-800 dark:text-slate-200">跨國資訊橋樑</div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-400">面板大廠 / 車用客戶 ⇌ 日本總部研發生產</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Metrics Section -->
+    <section id="metrics" class="py-16 bg-slate-100/70 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800/80 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-bold text-blue-600 dark:text-blue-400 tracking-wider uppercase">Data-Driven Execution</h2>
+                <p class="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mt-1">以數據與結果導向的專案管理力</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-blue-500/50 transition-all hover:-translate-y-1 shadow-sm">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400 text-xl mb-4">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                    </div>
+                    <div class="text-3xl font-black text-slate-900 dark:text-white">200<span class="text-blue-600 dark:text-blue-400">+</span></div>
+                    <div class="text-sm font-semibold text-slate-800 dark:text-slate-200 mt-1">量產產品同步維運</div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">有效管理廣泛 SKUs 的供應鏈需求、庫存水位變化及切替節點，確保產線持續運作。</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 transition-all hover:-translate-y-1 shadow-sm">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-xl mb-4">
+                        <i class="fa-solid fa-diagram-project"></i>
+                    </div>
+                    <div class="text-3xl font-black text-slate-900 dark:text-white">30<span class="text-emerald-600 dark:text-emerald-400">+</span></div>
+                    <div class="text-sm font-semibold text-slate-800 dark:text-slate-200 mt-1">NPI 新案開發導入</div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">橫跨規格對齊、樣品試作驗證、材料鎖定至 SOP 順利量產的全流程進度掌握。</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-cyan-500/50 transition-all hover:-translate-y-1 shadow-sm">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-600 dark:text-cyan-400 text-xl mb-4">
+                        <i class="fa-solid fa-coins"></i>
+                    </div>
+                    <div class="text-3xl font-black text-slate-900 dark:text-white">1.2<span class="text-cyan-600 dark:text-cyan-400">億</span></div>
+                    <div class="text-sm font-semibold text-slate-800 dark:text-slate-200 mt-1">半年專案與產品總額</div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">精準處理龐大金額規模之商業條件、訂單交期協調與高階客戶專案期待。</p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-amber-500/50 transition-all hover:-translate-y-1 shadow-sm">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 text-xl mb-4">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="text-3xl font-black text-slate-900 dark:text-white">0<span class="text-amber-600 dark:text-amber-400">次</span></div>
+                    <div class="text-sm font-semibold text-slate-800 dark:text-slate-200 mt-1">客戶產線中斷事故</div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">面對材料變更與產線突發狀況，落實風險預判與應變，達成客戶端零斷料。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-20 bg-slate-950">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-xs font-bold text-cyan-400 tracking-wider uppercase">Professional Matrix</h2>
+                <p class="text-3xl font-bold text-white mt-1">專業技能與產業知識矩陣</p>
+                <p class="text-slate-400 text-sm mt-3">結合硬實力專案架構與軟實力跨國溝通，展現多維度的跨界整合價值</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Category 1: Project Management -->
+                <div class="bg-slate-900/80 rounded-2xl p-6 border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-tasks"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">專案管理</h3>
+                                <span class="text-xs text-slate-400">Project Management</span>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-3">
+                            <li class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+                                <div class="text-sm font-medium text-slate-200">Requirement Analysis & Management</div>
+                                <div class="text-xs text-slate-400 mt-0.5">需求梳理與規格確認，收斂溝通範疇</div>
+                            </li>
+                            <li class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+                                <div class="text-sm font-medium text-slate-200">Project Coordination & Schedule Control</div>
+                                <div class="text-xs text-slate-400 mt-0.5">跨部門資源排程與進度節點追蹤</div>
+                            </li>
+                            <li class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+                                <div class="text-sm font-medium text-slate-200">Risk Management</div>
+                                <div class="text-xs text-slate-400 mt-0.5">提前識別供應鏈與品質潛在危機</div>
+                            </li>
+                            <li class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+                                <div class="text-sm font-medium text-slate-200">Stakeholder Management</div>
+                                <div class="text-xs text-slate-400 mt-0.5">經營高階客戶與總部研發信任關係</div>
+                            </li>
+                            <li class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+                                <div class="text-sm font-medium text-slate-200">Issue Analysis & Resolution</div>
+                                <div class="text-xs text-slate-400 mt-0.5">問題根因分析與即時制定替代方案</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Category 2: Business & Industry -->
+                <div class="bg-slate-900/80 rounded-2xl p-6 border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-lg bg-cyan-600/20 text-cyan-400 flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-industry"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">商務與產業知識</h3>
+                                <span class="text-xs text-slate-400">Business & Industry Domain</span>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-3">
+                            <li class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+                                <div class="text-sm font-medium text-slate-200">B2B Customer Management</div>
+                                <div class="text-xs text-slate-400 mt-0.5">面板巨頭與車用子公司關鍵客戶關係維護</div>
+                            </li>
+                            <li class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+                                <div class="text-sm font-medium text-slate-200">Manufacturing Process Knowledge</div>
+                                <div class="text-xs text-slate-400 mt-0.5">偏光片與顯示器製造流程與良率評估</div>
+                            </li>
+                            <li class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+                                <div class="text-sm font-medium text-slate-200">Supply Chain Coordination</div>
+                                <div class="text-xs text-slate-400 mt-0.5">供需排程對齊、庫存預警與分配</div>
+                            </li>
+                            <li class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+                                <div class="text-sm font-medium text-slate-200">Material Transition Management</div>
+                                <div class="text-xs text-slate-400 mt-0.5">材料 ECN 與切替無縫過渡管控</div>
+                            </li>
+                            <li class="bg-slate-950 p-3 rounded-lg border border-slate-800/80">
+                                <div class="text-sm font-medium text-cyan-300 font-semibold">車用顯示應用產業經驗</div>
+                                <div class="text-xs text-slate-400 mt-0.5">熟稔車規等級要求與嚴格認證標準</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Category 3: Languages & Soft Skills -->
+                <div class="bg-slate-900/80 rounded-2xl p-6 border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-600/20 text-emerald-400 flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-language"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">雙語優勢與軟實力</h3>
+                                <span class="text-xs text-slate-400">Languages & Soft Skills</span>
+                            </div>
+                        </div>
+
+                        <!-- Language Feature Box -->
+                        <div class="space-y-4">
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-sm font-bold text-white flex items-center gap-2">
+                                        <i class="fa-solid fa-certificate text-red-400"></i> 日本語能力試驗
+                                    </span>
+                                    <span class="text-xs font-black text-red-400 bg-red-950/60 px-2 py-0.5 rounded border border-red-800/50">JLPT N1</span>
+                                </div>
+                                <p class="text-xs text-slate-400 leading-relaxed mt-1">對接日本總部技術部門、生產開發團隊，無障礙進行高階商業商談與技術規格討論。</p>
+                            </div>
+
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-sm font-bold text-white flex items-center gap-2">
+                                        <i class="fa-solid fa-award text-blue-400"></i> 多益英語測驗
+                                    </span>
+                                    <span class="text-xs font-black text-blue-400 bg-blue-950/60 px-2 py-0.5 rounded border border-blue-800/50">TOEIC 900</span>
+                                </div>
+                                <p class="text-xs text-slate-400 leading-relaxed mt-1">具備流利英文商務書信、國際會議溝通與合約細節審閱能力。</p>
+                            </div>
+
+                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                                <div class="text-sm font-semibold text-slate-200 mb-1"><i class="fa-solid fa-users text-amber-400 mr-1.5"></i> 人才培育與團隊協調</div>
+                                <p class="text-xs text-slate-400 leading-relaxed">指導新進同仁熟悉 B2B 複雜商業流程與客戶應對技巧，強化團隊運作效率。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Case Study Section (STAR Method Crisis Management) -->
+    <section id="case-study" class="py-20 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 border-y border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                <div>
+                    <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase"><i class="fa-solid fa-star mr-1"></i> Key Incident & Leadership</span>
+                    <h2 class="text-3xl font-bold text-white mt-1">重點實案：材料供應商轉換危機處置</h2>
+                </div>
+                <p class="text-slate-400 text-sm mt-3 md:mt-0 max-w-md">展現面對高壓情境時的跨組織溝通分寸、敏捷應變與問題解決領導力</p>
+            </div>
+
+            <!-- Main Case Study Board -->
+            <div class="glass-card rounded-2xl p-6 sm:p-10 border border-slate-800 shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    
+                    <!-- Left Challenge Overview -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <div class="inline-block px-3 py-1 bg-red-950/80 text-red-400 text-xs font-bold rounded-lg border border-red-800/50">
+                            <i class="fa-solid fa-triangle-exclamation mr-1"></i> 危機情境 (The Situation)
+                        </div>
+
+                        <h3 class="text-xl font-bold text-white leading-snug">
+                            良率波動與產線異常下的<br><span class="text-cyan-400">跨國供應中斷風險防禦戰</span>
+                        </h3>
+
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            主導一項關鍵材料供應商轉換專案期間，遇到雙重突發挑戰：生產端發生良率大幅波動，加上產線出現異常事故，導致實質庫存數字與預測出現顯著落差。
+                        </p>
+
+                        <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-3">
+                            <div class="flex items-start gap-3">
+                                <i class="fa-solid fa-circle-xmark text-red-400 text-sm mt-1"></i>
+                                <div class="text-xs text-slate-300">
+                                    <span class="font-semibold text-white">關鍵挑戰：</span> 獨自代表公司面對客戶高層會議，面臨資訊落差與客戶端可能斷料的極高壓力。
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-400 text-sm mt-1"></i>
+                                <div class="text-xs text-slate-300">
+                                    <span class="font-semibold text-white">風險等級：</span> 車用客戶對停線零容忍，處理不當將面臨鉅額賠償與信任危機。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Strategy & Outcome Steps -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="inline-block px-3 py-1 bg-emerald-950/80 text-emerald-400 text-xs font-bold rounded-lg border border-emerald-800/50">
+                            <i class="fa-solid fa-lightbulb mr-1"></i> 處置策略與成果 (Actions & Impact)
+                        </div>
+
+                        <div class="space-y-4">
+                            <!-- Step 1 -->
+                            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 hover:border-slate-700 transition-colors">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-bold text-white flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-full bg-blue-600/30 text-blue-400 text-xs flex items-center justify-center font-bold">1</span>
+                                        主動透明溝通，重建信任底線
+                                    </span>
+                                    <span class="text-[11px] text-blue-400 font-mono">Transparency</span>
+                                </div>
+                                <p class="text-xs text-slate-300 leading-relaxed pl-8">
+                                    拒絕隱瞞或敷衍，選擇向客戶保持資訊高度透明。即時更新真實數據與搶修修正進度，消弭資訊不對稱帶來的集體恐慌。
+                                </p>
+                            </div>
+
+                            <!-- Step 2 -->
+                            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 hover:border-slate-700 transition-colors">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-bold text-white flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-full bg-cyan-600/30 text-cyan-400 text-xs flex items-center justify-center font-bold">2</span>
+                                        動態調配資源與日本總部連線
+                                    </span>
+                                    <span class="text-[11px] text-cyan-400 font-mono">Coordination</span>
+                                </div>
+                                <p class="text-xs text-slate-300 leading-relaxed pl-8">
+                                    緊急對接日本總部開發生產部門，建立每日對齊機制，彈性調配替代庫存與緊急產能，精準控管每日撥交量。
+                                </p>
+                            </div>
+
+                            <!-- Step 3 -->
+                            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 hover:border-slate-700 transition-colors">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-bold text-white flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-full bg-emerald-600/30 text-emerald-400 text-xs flex items-center justify-center font-bold">3</span>
+                                        圓滿落幕並贏得高階肯定
+                                    </span>
+                                    <span class="text-[11px] text-emerald-400 font-mono">Result & Learning</span>
+                                </div>
+                                <p class="text-xs text-slate-300 leading-relaxed pl-8">
+                                    堅守至危機完全化解，達成零斷料目標。獲得客戶主管特別肯定。深刻體悟跨組織溝通的分寸拿捏、應變彈性與風險自我保護意識。
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Work Experience Timeline Section -->
+    <section id="experience" class="py-20 bg-slate-950">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-xs font-bold text-blue-400 tracking-wider uppercase">Professional Background</h2>
+                <p class="text-3xl font-bold text-white mt-1">實戰經歷與核心職責</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto">
+                <!-- Main Experience Card -->
+                <div class="relative pl-8 border-l-2 border-blue-600/40 space-y-12">
+                    
+                    <!-- Role Node -->
+                    <div class="relative group">
+                        <!-- Bullet Dot -->
+                        <div class="absolute -left-[41px] top-1.5 w-5 h-5 rounded-full bg-blue-600 border-4 border-slate-950 group-hover:scale-125 transition-transform"></div>
+
+                        <div class="bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-800 hover:border-slate-700 transition-all">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4 mb-6">
+                                <div>
+                                    <div class="inline-block px-2.5 py-0.5 rounded bg-blue-950 text-blue-400 text-xs font-semibold mb-1">
+                                        前職經驗
+                                    </div>
+                                    <h3 class="text-xl sm:text-2xl font-bold text-white">業務副主任（Assistant Manager / Senior Specialist）</h3>
+                                    <p class="text-sm font-medium text-cyan-400 mt-0.5">偏光片製造業｜車用顯示事業組</p>
+                                </div>
+                                <div class="text-xs font-mono text-slate-400 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 self-start sm:self-auto">
+                                    <i class="fa-regular fa-calendar mr-1"></i> 近 3 年實戰經驗
+                                </div>
+                            </div>
+
+                            <h4 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-list-check text-blue-400"></i> 主要職責範疇與核心貢獻：
+                            </h4>
+
+                            <ul class="space-y-3 text-sm text-slate-300">
+                                <li class="flex items-start gap-3">
+                                    <i class="fa-solid fa-chevron-right text-blue-400 text-xs mt-1 shrink-0"></i>
+                                    <span><strong class="text-white">高規模產品與專案平行維運：</strong>同時管理約 200 項量產產品及 30 項 NPI 新案導入專案，半年管理範疇達新台幣 1.2 億元。</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fa-solid fa-chevron-right text-blue-400 text-xs mt-1 shrink-0"></i>
+                                    <span><strong class="text-white">NPI 全流程落地控管：</strong>主導新產品導入全流程，涵蓋客戶規格確認、特規材料預留、樣品驗證時程追蹤至 SOP 量產時程掌控。</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fa-solid fa-chevron-right text-blue-400 text-xs mt-1 shrink-0"></i>
+                                    <span><strong class="text-white">跨國跨部門溝通樞紐：</strong>作為關鍵客戶（面板大廠及車用子公司）與日本總部研發、生產部門之間的橋樑，確保雙邊資訊精準同步。</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fa-solid fa-chevron-right text-blue-400 text-xs mt-1 shrink-0"></i>
+                                    <span><strong class="text-white">供應鏈彈性與風控管理：</strong>靈活應對材料切替 (ECN)、客戶緊急增量與供應端突發異常，進行動態風險分析，確保客戶端供應零中斷。</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fa-solid fa-chevron-right text-blue-400 text-xs mt-1 shrink-0"></i>
+                                    <span><strong class="text-white">團隊賦能與傳承：</strong>負責新進同仁培訓，建立 B2B 業務流程 SOP 與客戶應對教練機制。</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PM Mindset & Value Section -->
+    <section class="py-16 bg-slate-900/60 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-900 p-6 rounded-xl border border-slate-800">
+                    <div class="text-blue-400 text-2xl mb-3"><i class="fa-solid fa-scale-balanced"></i></div>
+                    <h3 class="text-base font-bold text-white mb-2">跨組織溝通的分寸拿捏</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        在客戶期望與原廠技術/生產限制之間找到平衡點，既維護公司利益與技術邊界，亦兼顧客戶信任。
+                    </p>
+                </div>
+
+                <div class="bg-slate-900 p-6 rounded-xl border border-slate-800">
+                    <div class="text-cyan-400 text-2xl mb-3"><i class="fa-solid fa-eye"></i></div>
+                    <h3 class="text-base font-bold text-white mb-2">主動性風險預判</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        不只被動處理問題，更能從良率波動、材料供應鏈前端訊號中預先識別瓶頸，提前制定 Plan B。
+                    </p>
+                </div>
+
+                <div class="bg-slate-900 p-6 rounded-xl border border-slate-800">
+                    <div class="text-emerald-400 text-2xl mb-3"><i class="fa-solid fa-shield-cat"></i></div>
+                    <h3 class="text-base font-bold text-white mb-2">高壓情境與自我保護意識</h3>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        面對資訊落差與極高時效壓力時，保持冷靜條理，並透過扎實紀錄與程序規範確保專案留痕與團隊安全。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Footer Section -->
+    <section id="contact" class="py-20 bg-slate-100 dark:bg-slate-950 relative overflow-hidden transition-colors">
+        <!-- Glow Effect -->
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-80 bg-gradient-to-t from-blue-200/40 dark:from-blue-950/60 to-transparent pointer-events-none"></div>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <span class="text-xs font-bold text-blue-600 dark:text-cyan-400 tracking-wider uppercase">Open for Opportunities</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mt-2">期待與您探討專案管理合作可能</h2>
+            <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base mt-3 max-w-2xl mx-auto">
+                憑藉車用顯示供應鏈的深厚經驗、跨國專案協調能力與高抗壓的危機處置特質，我已準備好為貴團隊注入專案推動的核心動能。
+            </p>
+
+            <!-- Interactive Contact Info Card -->
+            <div class="mt-10 max-w-2xl mx-auto glass-card rounded-2xl p-6 sm:p-8 border shadow-xl">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    
+                    <!-- Quick Contact item 1 -->
+                    <div class="bg-white/80 dark:bg-slate-900/90 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                        <div class="flex items-center gap-3 text-left">
+                            <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                                <i class="fa-solid fa-language"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400">日文能力</div>
+                                <div class="text-sm font-bold text-slate-900 dark:text-white">JLPT N1 (母語級商務)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Contact item 2 -->
+                    <div class="bg-white/80 dark:bg-slate-900/90 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                        <div class="flex items-center gap-3 text-left">
+                            <div class="w-10 h-10 rounded-lg bg-cyan-100 dark:bg-cyan-600/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+                                <i class="fa-solid fa-globe"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400">英文能力</div>
+                                <div class="text-sm font-bold text-slate-900 dark:text-white">TOEIC 900 (精通)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Call to Action Buttons -->
+                <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button @click="navigator.clipboard ? navigator.clipboard.writeText('your.email@example.com') : document.execCommand('copy'); copyToast = true; setTimeout(() => copyToast = false, 3000)" 
+                            class="w-full sm:w-auto px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition-all shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-regular fa-copy"></i> 複製 Email 郵件地址
+                    </button>
+                    
+                    <a href="https://linkedin.com" target="_blank" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-brands fa-linkedin text-blue-600 dark:text-blue-400"></i> 造訪 LinkedIn 檔案
+                    </a>
+                </div>
+
+                <!-- Toast Notification -->
+                <div x-show="copyToast" x-transition class="mt-4 text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800/50 py-2 px-4 rounded-lg inline-block">
+                    <i class="fa-solid fa-check mr-1"></i> 已將聯絡資訊複製至剪貼簿！
+                </div>
+            </div>
+
+            <div class="mt-16 text-xs text-slate-500 font-mono">
+                &copy; 2026 Project Manager Portfolio. All rights reserved. Powered by Tailwind CSS.
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating Quick Control Widget (Bottom-Right) -->
+    <div class="fixed bottom-6 right-6 z-40 flex items-center gap-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-2 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800">
+        <button @click="isDark = !isDark" 
+                class="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:scale-105 transition-all"
+                :title="isDark ? '切換成明亮模式' : '切換成深色模式'">
+            <i class="fa-solid" :class="isDark ? 'fa-sun text-amber-400' : 'fa-moon text-indigo-600'"></i>
+        </button>
+        <button @click="toggleAudio()" 
+                class="px-3.5 h-10 rounded-xl bg-blue-600 text-white font-medium text-xs flex items-center gap-2 hover:bg-blue-500 transition-all shadow-md">
+            <i class="fa-solid" :class="isPlaying ? 'fa-volume-high animate-bounce' : 'fa-music'"></i>
+            <span x-text="isPlaying ? '暫停音樂' : '播放背景音樂'"></span>
+        </button>
+    </div>
+
+</body>
+</html>
